@@ -8,21 +8,19 @@ const cors = require("cors");
 app.use(cors());
 app.use(express.json());
 
-const uri = process.env.MONGODB_URL;
+const uri = process.env.DATABASE_URL;
 
 const client = new MongoClient(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
 
 const run = async () => {
   await client.connect(); // Ensure connection to MongoDB
   try {
-    const db = client.db("todos");
-    const taskCollection = db.collection("tasks");
+    const db = client.db("MechanicalKeyboard"); // todos
+    const taskCollection = db.collection("keyboards"); // tasks
 
-    app.get("/tasks", async (req, res) => {
+    app.get("/keyboards", async (req, res) => {
       let query = {};
       if (req.query.priority) {
         query.priority = req.query.priority;
@@ -32,25 +30,25 @@ const run = async () => {
       res.send({ status: true, data: tasks });
     });
 
-    app.post("/task", async (req, res) => {
+    app.post("/keyboard", async (req, res) => {
       const task = req.body;
       const result = await taskCollection.insertOne(task);
       res.send(result);
     });
 
-    app.get("/task/:id", async (req, res) => {
+    app.get("/keyboard/:id", async (req, res) => {
       const id = req.params.id;
       const result = await taskCollection.findOne({ _id: ObjectId(id) });
       res.send(result);
     });
 
-    app.delete("/task/:id", async (req, res) => {
+    app.delete("/keyboard/:id", async (req, res) => {
       const id = req.params.id;
       const result = await taskCollection.deleteOne({ _id: ObjectId(id) });
       res.send(result);
     });
 
-    app.put("/task/:id", async (req, res) => {
+    app.put("/keyboard/:id", async (req, res) => {
       const id = req.params.id;
       const task = req.body;
       const filter = { _id: ObjectId(id) };
@@ -74,7 +72,7 @@ const run = async () => {
 run().catch((err) => console.log(err));
 
 app.get("/", (req, res) => {
-  res.send("Welcome todo Project!");
+  res.send("Welcome to the Mechanical Keyboard Project!");
 });
 
 app.listen(port, () => {
