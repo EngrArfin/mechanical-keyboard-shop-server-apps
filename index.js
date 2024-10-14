@@ -37,8 +37,8 @@ const run = async () => {
     await client.connect(); // Connect to MongoDB
     const db = client.db("MechanicalKeyboard");
     const usersCollection = db.collection("users"); // For users registration and login
-    const taskCollection = db.collection("tasks"); // For tasks
     const productCollection = db.collection("products"); // For products
+    const allproductCollection = db.collection("allproducts");
     const cartCollection = db.collection("carts"); // For carts
 
     /* --------- User Authentication --------- */
@@ -120,9 +120,9 @@ const run = async () => {
     });
 
     // Get all tasks
-    app.get("/tasks", async (req, res) => {
-      const tasks = await taskCollection.find().toArray();
-      res.send({ status: true, data: tasks });
+    app.get("/allproducts", async (req, res) => {
+      const allproducts = await allproductCollection.find().toArray();
+      res.send({ status: true, data: allproducts });
     });
 
     // Get all products
@@ -169,29 +169,31 @@ const run = async () => {
     });
 
     // Task routes
-    app.post("/task", async (req, res) => {
-      const task = req.body;
-      const result = await taskCollection.insertOne(task);
+    app.post("/allproduct", async (req, res) => {
+      const allproduct = req.body;
+      const result = await allproductCollection.insertOne(allproduct);
       res.send(result);
     });
 
-    app.get("/task/:id", async (req, res) => {
+    app.get("/allproduct/:id", async (req, res) => {
       const id = req.params.id;
-      const result = await taskCollection.findOne({ _id: ObjectId(id) });
+      const result = await allproductCollection.findOne({ _id: ObjectId(id) });
       res.send(result);
     });
 
-    app.delete("/task/:id", async (req, res) => {
+    app.delete("/allproduct/:id", async (req, res) => {
       const id = req.params.id;
-      const result = await taskCollection.deleteOne({ _id: ObjectId(id) });
+      const result = await allproductCollection.deleteOne({
+        _id: ObjectId(id),
+      });
       res.send(result);
     });
 
-    app.put("/task/:id", async (req, res) => {
+    app.put("/allproduct/:id", async (req, res) => {
       const id = req.params.id;
-      const task = req.body;
+      const allproduct = req.body;
       const filter = { _id: ObjectId(id) };
-      const updateDoc = { $set: task };
+      const updateDoc = { $set: allproduct };
       const result = await taskCollection.updateOne(filter, updateDoc);
       res.json(result);
     });
